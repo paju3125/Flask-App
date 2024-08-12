@@ -29,7 +29,7 @@ jobs:
           ANSIBLE_FORCE_COLOR: true
 
       - name: Upload Flask application log
-      uses: actions/upload-artifact@v3
-      with:
-        name: flask-app-log
-        path: /home/runner/work/Flask-App/Flask_App/app.log
+        uses: actions/upload-artifact@v3
+        with:
+          name: flask-app-log
+          path: /home/runner/work/Flask-App/Flask_App/app.log

@@ -5,19 +5,19 @@
     - name: Pull the latest code from the GitHub repository
       git:
         repo: 'https://github.com/paju3125/Flask-App.git'
-        dest: /home/runner/work/Flask-App/deploy/Flask_App
+        dest: /home/prajvalgandhi/deploy/Flask_App
         version: master
 
     - name: Create a virtual environment using venv
-      command: python3 -m venv /home/runner/work/Flask-App/deploy/Flask_App/venv
+      command: python3 -m venv /home/prajvalgandhi/deploy/Flask_App/venv
       args:
-        creates: /home/runner/work/Flask-App/deploy/Flask_App/venv/bin/activate
+        creates: /home/prajvalgandhi/deploy/Flask_App/venv/bin/activate
 
     - name: Install dependencies
-      command: /home/runner/work/Flask-App/deploy/Flask_App/venv/bin/pip install -r /home/runner/work/Flask-App/deploy/Flask_App/requirements.txt
+      command: /home/prajvalgandhi/deploy/Flask_App/venv/bin/pip install -r /home/prajvalgandhi/deploy/Flask_App/requirements.txt
 
     - name: Start the Flask application
-      command: nohup /home/runner/work/Flask-App/deploy/Flask_App/venv/bin/python /home/runner/work/Flask-App/deploy/Flask_App/app.py > /home/runner/work/Flask-App/deploy/Flask_App/app.log 2>&1 &
+      command: nohup /home/prajvalgandhi/deploy/Flask_App/venv/bin/python /home/prajvalgandhi/deploy/Flask_App/app.py > /home/prajvalgandhi/deploy/Flask_App/app.log 2>&1 &
       args:
-        chdir: /home/runner/work/Flask-App/deploy/Flask_App
+        chdir: /home/prajvalgandhi/deploy/Flask_App
 

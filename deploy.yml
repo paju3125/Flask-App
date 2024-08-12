@@ -18,10 +18,6 @@
 
     - name: Run Flask application tests
       command: >
-        /home/runner/work/Flask-App/deploy/Flask_App/venv/bin/python -m pytest /home/runner/work/Flask-App/deploy/Flask_App/tests
-        > /home/runner/work/Flask-App/deploy/Flask_App/test_results.log 2>&1
+        /home/runner/work/Flask-App/deploy/Flask_App/venv/bin/python -m pytest
       args:
         chdir: /home/runner/work/Flask-App/deploy/Flask_App
-
-    - name: Display test results
-      command: cat /home/runner/work/Flask-App/deploy/Flask_App/test_results.log

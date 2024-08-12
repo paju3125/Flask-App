@@ -17,6 +17,7 @@
       command: /home/runner/work/Flask-App/deploy/Flask_App/venv/bin/pip install -r /home/runner/work/Flask-App/deploy/Flask_App/requirements.txt
 
     - name: Run Flask application tests
-      run: |
-        cd /home/runner/work/Flask-App/deploy/Flask_App
+      command: >
         /home/runner/work/Flask-App/deploy/Flask_App/venv/bin/python -m pytest
+      args:
+        chdir: /home/runner/work/Flask-App/deploy/Flask_App

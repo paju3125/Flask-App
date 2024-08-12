@@ -17,6 +17,7 @@
       command: /home/runner/work/Flask-App/deploy/Flask_App/venv/bin/pip install -r /home/runner/work/Flask-App/deploy/Flask_App/requirements.txt
 
     - name: Start the Flask application
-      command: /home/runner/work/Flask-App/deploy/Flask_App/venv/bin/python /home/runner/work/Flask-App/deploy/Flask_App/app.py
+      command: nohup /home/runner/work/Flask-App/deploy/Flask_App/venv/bin/python /home/runner/work/Flask-App/deploy/Flask_App/app.py > /home/runner/work/Flask-App/deploy/Flask_App/app.log 2>&1 &
       args:
         chdir: /home/runner/work/Flask-App/deploy/Flask_App
+

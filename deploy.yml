@@ -5,18 +5,18 @@
     - name: Pull the latest code from the GitHub repository
       git:
         repo: 'https://github.com/paju3125/Flask-App.git'
-        dest: /home/prajvalgandhi/Desktop/deploy/Flask App
+        dest: /home/prajvalgandhi/Desktop/deploy/Flask_App
         version: master
 
     - name: Create a virtual environment using venv
-      command: python3 -m venv /home/prajvalgandhi/Desktop/deploy/Flask App/venv
+      command: python3 -m venv /home/prajvalgandhi/Desktop/deploy/Flask_App/venv
       args:
-        creates: /home/prajvalgandhi/Desktop/deploy/Flask App/venv/bin/activate
+        creates: /home/prajvalgandhi/Desktop/deploy/Flask_App/venv/bin/activate
 
     - name: Install dependencies
-      command: /home/prajvalgandhi/Desktop/deploy/Flask App/venv/bin/pip install -r /home/prajvalgandhi/Desktop/deploy/Flask App/requirements.txt
+      command: /home/prajvalgandhi/Desktop/deploy/Flask_App/venv/bin/pip install -r /home/prajvalgandhi/Desktop/deploy/Flask_App/requirements.txt
 
     - name: Start the Flask application
-      command: "/home/prajvalgandhi/Desktop/deploy/Flask App/venv/bin/python /home/prajvalgandhi/Desktop/deploy/Flask App/app.py"
+      command: "/home/prajvalgandhi/Desktop/deploy/Flask_App/venv/bin/python /home/prajvalgandhi/Desktop/deploy/Flask_App/app.py"
       args:
-        chdir: "/home/prajvalgandhi/Desktop/deploy/Flask App"
+        chdir: "/home/prajvalgandhi/Desktop/deploy/Flask_App"

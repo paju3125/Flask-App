@@ -1,0 +1,22 @@
+---
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: Pull the latest code from the GitHub repository
+      git:
+        repo: 'https://github.com/paju3125/Flask-App.git'
+        dest: /home/prajvalgandhi/Desktop/deploy/Flask App
+        version: master
+
+    - name: Create a virtual environment using venv
+      command: python3 -m venv /home/prajvalgandhi/Desktop/deploy/Flask App/venv
+      args:
+        creates: /home/prajvalgandhi/Desktop/deploy/Flask App/venv/bin/activate
+
+    - name: Install dependencies
+      command: /home/prajvalgandhi/Desktop/deploy/Flask App/venv/bin/pip install -r /home/prajvalgandhi/Desktop/deploy/Flask App/requirements.txt
+
+    - name: Start the Flask application
+      command: "/home/prajvalgandhi/Desktop/deploy/Flask App/venv/bin/python /home/prajvalgandhi/Desktop/deploy/Flask App/app.py"
+      args:
+        chdir: "/home/prajvalgandhi/Desktop/deploy/Flask App"

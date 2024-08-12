@@ -16,12 +16,12 @@
     - name: Install dependencies
       command: /home/runner/work/Flask-App/deploy/Flask_App/venv/bin/pip install -r /home/runner/work/Flask-App/deploy/Flask_App/requirements.txt
 
-    - name: Start the Flask application
+    - name: Start Flask application and check logs
       command: >
         nohup /home/runner/work/Flask-App/deploy/Flask_App/venv/bin/python /home/runner/work/Flask-App/deploy/Flask_App/app.py
         > /home/runner/work/Flask-App/deploy/Flask_App/app.log 2>&1 &
       args:
         chdir: /home/runner/work/Flask-App/deploy/Flask_App
 
-    - name: Wait for Flask to start
-      command: sleep 10
+    - name: Inspect application logs
+      command: cat /home/runner/work/Flask-App/deploy/Flask_App/app.log

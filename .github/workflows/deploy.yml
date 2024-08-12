@@ -3,7 +3,7 @@ name: Deploy Flask App
 on:
   push:
     branches:
-      - main
+      - master  # Trigger on push to the master branch
 
 jobs:
   deploy:
@@ -11,16 +11,25 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
 
       - name: Install Ansible
-        run: sudo apt-get install -y ansible
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible
 
-      - name: Run Ansible playbook
+      - name: Run Ansible Playbook
         run: ansible-playbook -i localhost, deploy.yml
+        env:
+          ANSIBLE_FORCE_COLOR: true
 
       - name: Upload Flask application log
-        uses: actions/upload-artifact@v3
-        with:
-          name: flask-app-log
-          path: /home/runner/work/Flask-App/Flask_App/app.log
+      uses: actions/upload-artifact@v3
+      with:
+        name: flask-app-log
+        path: /home/runner/work/Flask-App/Flask_App/app.log

@@ -29,13 +29,6 @@ jobs:
     - name: List Directories
       run: ls -la
 
-    # Print the Ansible Vault password (for debugging only)
-    - name: Print Ansible Vault Password
-      env:
-        ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
-      run: |
-        echo "Vault Password: $ANSIBLE_VAULT_PASSWORD"
-
     # Run the Ansible playbook
     - name: Run Ansible Playbook
       env:

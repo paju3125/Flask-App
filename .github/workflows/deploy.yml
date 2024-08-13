@@ -29,8 +29,16 @@ jobs:
     - name: List Directories
       run: ls -la
 
-    # Run the Ansible playbook
+    - name: Check if Vault Password is Set
+      id: check_vault
+      run: |
+        if [ -z "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" ]; then
+          echo "Vault password not set"
+          exit 1
+        fi
+
     - name: Run Ansible Playbook
+      if: steps.check_vault.outcome == 'success'
       env:
         ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
       run: |

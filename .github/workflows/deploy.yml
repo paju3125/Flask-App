@@ -10,19 +10,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Check out the application repository
     - name: Checkout Application Repository
       uses: actions/checkout@v3
       with:
         repository: paju3125/Flask-App
         ref: master
 
+    # Check out the ansible-playbooks repository
     - name: Checkout Ansible Playbooks Repository
       uses: actions/checkout@v3
       with:
         repository: paju3125/ansible-playbook
+        path: ansible-playbooks  # Specify a custom path if needed
         ref: main
 
+    # List directories to verify the presence of the ansible-playbooks folder
+    - name: List Directories
+      run: ls -la
+
+    # Run the Ansible playbook
     - name: Run Ansible Playbook
       run: |
-        cd ansible-playbook
+        cd ansible-playbooks
         ansible-playbook -i localhost deploy.yml

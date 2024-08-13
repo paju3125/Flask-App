@@ -31,8 +31,8 @@ jobs:
       - name: List directory contents
         run: ls -la /home/runner/work/Flask-App/deploy/Flask_App
 
-      - name: Upload directory contents as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: flask-app-directory
-          path: /home/runner/work/Flask-App/deploy/Flask_App
+      # - name: Upload directory contents as artifact
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: flask-app-directory
+      #     path: /home/runner/work/Flask-App/deploy/Flask_App

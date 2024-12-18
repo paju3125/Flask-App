@@ -1,48 +1,56 @@
 name: Deploy Application
 
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
+    inputs:
+      target_key:
+        description: "The version key to increment (APP_VERSION or TOOLS_VERSION)"
+        required: true
+        default: "APP_VERSION"
+      version_part:
+        description: "Which part to increment (major, minor, or patch)"
+        required: true
+        default: "patch"
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # Check out the application repository
+    # Step 1: Checkout the application repository
     - name: Checkout Application Repository
       uses: actions/checkout@v3
       with:
         repository: paju3125/Flask-App
         ref: master
 
-    # Step 4: Increment the version
+    # Step 2: Increment the version
     - name: Increment Version
       run: |
-        python scripts/increment_version.py .env ${{ github.event.inputs.target_key }} ${{ github.event.inputs.version_part }}
+        python scripts/increment_version.py .env "${{ github.event.inputs.target_key }}" "${{ github.event.inputs.version_part }}"
 
-    # Step 5: Commit the updated .env file
+    # Step 3: Commit and push the updated .env file
     - name: Commit and Push Changes
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git add .env
         git commit -m "Incremented ${{ github.event.inputs.target_key }} (${{ github.event.inputs.version_part }})"
-        git push origin ${{ github.ref }}
-        
-    # Check out the ansible-playbooks repository
+        git push origin ${{ github.ref_name }}
+
+    # Step 4: Checkout the ansible-playbooks repository
     - name: Checkout Ansible Playbooks Repository
       uses: actions/checkout@v3
       with:
         repository: paju3125/ansible-playbook
-        path: ansible-playbooks  # Specify a custom path if needed
+        path: ansible-playbooks
         ref: main
 
-    # List directories to verify the presence of the ansible-playbooks folder
+    # Step 5: List directories to verify the presence of the ansible-playbooks folder
     - name: List Directories
       run: ls -la
 
+    # Step 6: Check if Vault Password is Set
     - name: Check if Vault Password is Set
       id: check_vault
       run: |
@@ -51,6 +59,7 @@ jobs:
           exit 1
         fi
 
+    # Step 7: Run the Ansible Playbook
     - name: Run Ansible Playbook
       if: steps.check_vault.outcome == 'success'
       env:

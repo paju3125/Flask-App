@@ -38,34 +38,3 @@ jobs:
         git add .env
         git commit -m "Incremented ${{ github.event.inputs.target_key }} (${{ github.event.inputs.version_part }})"
         git push origin ${{ github.ref_name }}
-
-    # Step 4: Checkout the ansible-playbooks repository
-    - name: Checkout Ansible Playbooks Repository
-      uses: actions/checkout@v3
-      with:
-        repository: paju3125/ansible-playbook
-        path: ansible-playbooks
-        ref: main
-
-    # Step 5: List directories to verify the presence of the ansible-playbooks folder
-    - name: List Directories
-      run: ls -la
-
-    # Step 6: Check if Vault Password is Set
-    - name: Check if Vault Password is Set
-      id: check_vault
-      run: |
-        if [ -z "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" ]; then
-          echo "Vault password not set"
-          exit 1
-        fi
-
-    # Step 7: Run the Ansible Playbook
-    - name: Run Ansible Playbook
-      if: steps.check_vault.outcome == 'success'
-      env:
-        ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
-      run: |
-        echo "$ANSIBLE_VAULT_PASSWORD" > .vault_pass
-        cd ansible-playbooks
-        ansible-playbook -i localhost deploy.yml

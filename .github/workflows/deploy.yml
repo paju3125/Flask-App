@@ -3,7 +3,7 @@ name: Automated Tagging and Release
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   create-tag:

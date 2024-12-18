@@ -1,9 +1,12 @@
 name: Automated Tagging and Release
 
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump type (major, minor, patch)'
+        required: true
+        default: 'patch'
 
 jobs:
   create-tag:
@@ -21,29 +24,6 @@ jobs:
         echo "Latest tag: $latest_tag"
         echo "latest_tag=$latest_tag" >> $GITHUB_ENV
 
-    - name: Analyze commit messages
-      id: analyze_commits
-      run: |
-        # Get all commits since the last tag
-        commits=$(git log ${{ env.latest_tag }}..HEAD --oneline)
-        echo "Commits since last tag:"
-        echo "$commits"
-
-        # Default bump type
-        bump="patch"
-
-        # Analyze commits for keywords
-        if echo "$commits" | grep -q "BREAKING CHANGE"; then
-          bump="major"
-        elif echo "$commits" | grep -q "feat:"; then
-          bump="minor"
-        elif echo "$commits" | grep -q "fix:"; then
-          bump="patch"
-        fi
-
-        echo "Determined bump type: $bump"
-        echo "bump=$bump" >> $GITHUB_ENV
-
     - name: Increment version
       id: increment_version
       run: |
@@ -56,7 +36,7 @@ jobs:
         patch=$(echo $version | cut -d. -f3)
 
         # Increment version based on bump type
-        case "${{ env.bump }}" in
+        case "${{ github.event.inputs.bump }}" in
           major)
             major=$((major + 1))
             minor=0

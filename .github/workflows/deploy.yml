@@ -1,34 +1,53 @@
-name: Versioning and Deployment
+name: Version Increment and Deployment
 
 on:
-  release:
-    types: [created]
+  workflow_dispatch:
+    inputs:
+      target_key:
+        description: "Version Key to Increment (APP_VERSION or TOOLS_VERSION)"
+        required: true
+        default: "APP_VERSION"
+      version_part:
+        description: "Which part of the version to increment (major, minor, or patch)"
+        required: true
+        default: "patch"
 
 jobs:
-  release-version:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+    # Checkout the repository
+    - name: Checkout Repository
+      uses: actions/checkout@v3
 
-    - name: Get the latest Git tag and update version
-      run: |
-        # Get the current version from Git tags
-        VERSION=$(git describe --tags)
-        echo "Version: $VERSION"
-        echo "VERSION=$VERSION" >> $GITHUB_ENV
-        # If the version doesn't exist, create one
-        if [ -z "$VERSION" ]; then
-          VERSION="v1.0.0"
-          git tag $VERSION
-          git push origin $VERSION
-        fi
+    # Set up Python and install dependencies
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.x'
 
-    - name: Deploy to Production (or other environment)
+    # Install python-dotenv package
+    - name: Install dependencies
       run: |
-        echo "Deploying version $VERSION"
-        # Here you can add your deployment steps such as:
-        # - Restarting a service
-        # - Pushing a Docker container
-        # - Triggering other actions
+        pip install python-dotenv
+
+    # Run the increment version script
+    - name: Increment Version
+      run: |
+        python scripts/increment_version.py "${{ github.event.inputs.target_key }}" "${{ github.event.inputs.version_part }}"
+
+    # Commit and push the updated .env file
+    - name: Commit and Push Updated Version
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add .env
+        git commit -m "Incremented ${{ github.event.inputs.target_key }} (${ { github.event.inputs.version_part }})"
+        git push origin ${{ github.ref_name }}
+
+    # Deploy Application (Optional Step: You can add your deployment steps here)
+    - name: Deploy Flask Application
+      run: |
+        echo "Deploying the Flask Application..."
+        # Add your deploy steps here (e.g., restart a service, etc.)

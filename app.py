@@ -17,7 +17,7 @@ def get_version():
             .strip()
         )
     except subprocess.CalledProcessError:
-        version = "unknown"
+        version = "v0.0.0"
 
     try:
         # Fetch the latest tool version tag
@@ -27,7 +27,7 @@ def get_version():
             .strip()
         )
     except subprocess.CalledProcessError:
-        tool_version = "unknown"
+        tool_version = "tool-v0.0.0"
 
     try:
         commit_hash = (

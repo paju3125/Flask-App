@@ -25,9 +25,9 @@ jobs:
         ref: master
 
     - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.x'
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.x'
 
     # Step 3: Install dependencies (if needed for version incrementing script)
     - name: Install dependencies

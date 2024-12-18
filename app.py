@@ -9,18 +9,25 @@ def get_version():
     try:
         # Fetch the latest Git tag (version)
         version = (
-            subprocess.check_output(["git", "describe", "--tags"]).decode().strip()
+            subprocess.check_output(["git", "describe", "--tags", "--abbrev=0"])
+            .decode()
+            .strip()
         )
     except subprocess.CalledProcessError:
         version = "unknown"
+
+    try:
+        commit_hash = (
+            subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
+        )
+    except subprocess.CalledProcessError:
+        commit_hash = "unknown"
 
     return jsonify(
         {
             "version": version,
             "build_time": "unknown",  # You can also store build time dynamically
-            "commit_hash": subprocess.check_output(["git", "rev-parse", "HEAD"])
-            .decode()
-            .strip(),
+            "commit_hash": commit_hash,
         }
     )
 

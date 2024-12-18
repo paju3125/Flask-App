@@ -1,40 +1,34 @@
-name: Deploy Application
+name: Versioning and Deployment
 
 on:
-  workflow_dispatch:
-    inputs:
-      target_key:
-        description: "The version key to increment (APP_VERSION or TOOLS_VERSION)"
-        required: true
-        default: "APP_VERSION"
-      version_part:
-        description: "Which part to increment (major, minor, or patch)"
-        required: true
-        default: "patch"
+  release:
+    types: [created]
 
 jobs:
-  deploy:
+  release-version:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout the application repository
-    - name: Checkout Application Repository
-      uses: actions/checkout@v3
-      with:
-        repository: paju3125/Flask-App
-        ref: master
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-    # Step 2: Increment the version
-    - name: Increment Version
+    - name: Get the latest Git tag and update version
       run: |
-        python scripts/increment_version.py .env "${{ github.event.inputs.target_key }}" "${{ github.event.inputs.version_part }}"
+        # Get the current version from Git tags
+        VERSION=$(git describe --tags)
+        echo "Version: $VERSION"
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        # If the version doesn't exist, create one
+        if [ -z "$VERSION" ]; then
+          VERSION="v1.0.0"
+          git tag $VERSION
+          git push origin $VERSION
+        fi
 
-    # Step 3: Commit and push the updated .env file
-    - name: Commit and Push Changes
+    - name: Deploy to Production (or other environment)
       run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/paju3125/Flask-App.git
-        git add .env
-        git commit -m "Incremented ${{ github.event.inputs.target_key }} (${{ github.event.inputs.version_part }})"
-        git push origin ${{ github.ref_name }}
+        echo "Deploying version $VERSION"
+        # Here you can add your deployment steps such as:
+        # - Restarting a service
+        # - Pushing a Docker container
+        # - Triggering other actions

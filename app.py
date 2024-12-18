@@ -4,6 +4,7 @@ import subprocess
 app = Flask(__name__)
 
 
+# added commit to test minor
 @app.route("/api/version")
 def get_version():
     try:

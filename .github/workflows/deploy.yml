@@ -83,5 +83,5 @@ jobs:
         git tag ${{ env.new_tag }}
         git push origin ${{ env.new_tag }}
 
-    - name: Output New Tag
-      run: echo "New tag created: ${{ env.new_tag }}"
+    # - name: Output New Tag
+    #   run: echo "New tag created: ${{ env.new_tag }}"

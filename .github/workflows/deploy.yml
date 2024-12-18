@@ -7,6 +7,10 @@ on:
         description: 'Version bump type (major, minor, patch)'
         required: true
         default: 'patch'
+      tool_bump:
+        description: 'Tool version bump type (major, minor, patch)'
+        required: true
+        default: 'patch'
 
 jobs:
   create-tag:
@@ -24,8 +28,8 @@ jobs:
         echo "Latest tag: $latest_tag"
         echo "latest_tag=$latest_tag" >> $GITHUB_ENV
 
-    - name: Increment version
-      id: increment_version
+    - name: Increment app version
+      id: increment_app_version
       run: |
         # Extract latest tag
         latest_tag=${{ env.latest_tag }}
@@ -53,16 +57,50 @@ jobs:
 
         new_tag="${tag_prefix}${major}.${minor}.${patch}"
         echo "new_tag=$new_tag" >> $GITHUB_ENV
-        echo "New version: $new_tag"
+        echo "New app version: $new_tag"
 
-    - name: Create a new Git tag
+    - name: Increment tool version
+      id: increment_tool_version
+      run: |
+        # Extract latest tag
+        latest_tag=${{ env.latest_tag }}
+        tag_prefix="tool-v"
+        version=${latest_tag#$tag_prefix}  # Remove prefix if any
+        major=$(echo $version | cut -d. -f1)
+        minor=$(echo $version | cut -d. -f2)
+        patch=$(echo $version | cut -d. -f3)
+
+        # Increment version based on bump type
+        case "${{ github.event.inputs.tool_bump }}" in
+          major)
+            major=$((major + 1))
+            minor=0
+            patch=0
+            ;;
+          minor)
+            minor=$((minor + 1))
+            patch=0
+            ;;
+          patch)
+            patch=$((patch + 1))
+            ;;
+        esac
+
+        new_tool_tag="${tag_prefix}${major}.${minor}.${patch}"
+        echo "new_tool_tag=$new_tool_tag" >> $GITHUB_ENV
+        echo "New tool version: $new_tool_tag"
+
+    - name: Create new Git tags
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         
         git tag ${{ env.new_tag }}
+        git tag ${{ env.new_tool_tag }}
         git push origin ${{ env.new_tag }}
+        git push origin ${{ env.new_tool_tag }}
 
-    - name: Output New Tag
+    - name: Output New Tags
       run: |
-        echo "New tag created: ${{ env.new_tag }}"
+        echo "New app tag created: ${{ env.new_tag }}"
+        echo "New tool tag created: ${{ env.new_tool_tag }}"

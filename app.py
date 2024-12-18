@@ -10,7 +10,9 @@ def get_version():
     try:
         # Fetch the latest Git tag (version)
         version = (
-            subprocess.check_output(["git", "describe", "--tags", "--abbrev=0"])
+            subprocess.check_output(
+                ["git", "describe", "--tags", "--abbrev=0", "--exclude=tool-v*"]
+            )
             .decode()
             .strip()
         )

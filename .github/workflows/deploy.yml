@@ -20,13 +20,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Get latest tag
-      id: get_latest_tag
+    - name: Get latest tags
+      id: get_latest_tags
       run: |
         git fetch --tags
-        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+        latest_tag=$(git describe --tags `git rev-list --tags --max-count=1 --exclude=tool-v*`)
+        latest_tool_tag=$(git describe --tags `git rev-list --tags --max-count=1 --match=tool-v*`)
         echo "Latest tag: $latest_tag"
+        echo "Latest tool tag: $latest_tool_tag"
         echo "latest_tag=$latest_tag" >> $GITHUB_ENV
+        echo "latest_tool_tag=$latest_tool_tag" >> $GITHUB_ENV
 
     - name: Increment app version
       id: increment_app_version
@@ -62,10 +65,10 @@ jobs:
     - name: Increment tool version
       id: increment_tool_version
       run: |
-        # Extract latest tag
-        latest_tag=${{ env.latest_tag }}
+        # Extract latest tool tag
+        latest_tool_tag=${{ env.latest_tool_tag }}
         tag_prefix="tool-v"
-        version=${latest_tag#$tag_prefix}  # Remove prefix if any
+        version=${latest_tool_tag#$tag_prefix}  # Remove prefix if any
         major=$(echo $version | cut -d. -f1)
         minor=$(echo $version | cut -d. -f2)
         patch=$(echo $version | cut -d. -f3)

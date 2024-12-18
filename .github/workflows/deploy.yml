@@ -25,7 +25,7 @@ jobs:
       id: analyze_commits
       run: |
         # Get all commits since the last tag
-        commits=$(git log ${latest_tag}..HEAD --oneline)
+        commits=$(git log ${{ env.latest_tag }}..HEAD --oneline)
         echo "Commits since last tag:"
         echo "$commits"
 

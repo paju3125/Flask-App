@@ -1,20 +1,28 @@
-import os
 from flask import Flask, jsonify
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
+import subprocess
 
 app = Flask(__name__)
 
 
-# Endpoint to get version info
-@app.route("/version", methods=["GET"])
+@app.route("/api/version")
 def get_version():
-    app_version = os.getenv("APP_VERSION", "unknown")
-    tools_version = os.getenv("TOOLS_VERSION", "unknown")
+    try:
+        # Fetch the latest Git tag (version)
+        version = (
+            subprocess.check_output(["git", "describe", "--tags"]).decode().strip()
+        )
+    except subprocess.CalledProcessError:
+        version = "unknown"
 
-    return jsonify({"app_version": app_version, "tools_version": tools_version})
+    return jsonify(
+        {
+            "version": version,
+            "build_time": "unknown",  # You can also store build time dynamically
+            "commit_hash": subprocess.check_output(["git", "rev-parse", "HEAD"])
+            .decode()
+            .strip(),
+        }
+    )
 
 
 if __name__ == "__main__":

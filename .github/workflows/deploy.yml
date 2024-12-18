@@ -1,14 +1,14 @@
-name: Version Increment and Deployment
+name: Deploy Application
 
 on:
   workflow_dispatch:
     inputs:
       target_key:
-        description: "Version Key to Increment (APP_VERSION or TOOLS_VERSION)"
+        description: "The version key to increment (APP_VERSION or TOOLS_VERSION)"
         required: true
         default: "APP_VERSION"
       version_part:
-        description: "Which part of the version to increment (major, minor, or patch)"
+        description: "Which part to increment (major, minor, or patch)"
         required: true
         default: "patch"
 
@@ -17,38 +17,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Checkout the repository
-    - name: Checkout Repository
+    # Step 1: Checkout the application repository
+    - name: Checkout Application Repository
       uses: actions/checkout@v3
-
-    # Set up Python and install dependencies
-    - name: Set up Python
-      uses: actions/setup-python@v3
       with:
-        python-version: '3.x'
+        repository: paju3125/Flask-App
+        ref: master
 
-    # Install python-dotenv package
-    - name: Install dependencies
-      run: |
-        pip install python-dotenv
-
-    # Run the increment version script
+    # Step 2: Increment the version (just updating the version in .env)
     - name: Increment Version
       run: |
-        python scripts/increment_version.py "${{ github.event.inputs.target_key }}" "${{ github.event.inputs.version_part }}"
+        python scripts/increment_version.py .env "${{ github.event.inputs.target_key }}" "${{ github.event.inputs.version_part }}"
 
-    # Commit and push the updated .env file
-    - name: Commit and Push Changes
+    # Step 3: Create a new Git tag for the release
+    - name: Create Git Tag
       run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/paju3125/Flask-App.git
-        git add .env
-        git commit -m "Incremented ${{ github.event.inputs.target_key }} (${{ github.event.inputs.version_part }})"
-        git push origin ${{ github.ref_name }}
+        TAG="v$(date +'%Y%m%d%H%M%S')"  # Custom tag format (can be version-based)
+        git tag $TAG
+        git push origin $TAG
 
-    # Deploy Application (Optional Step: You can add your deployment steps here)
-    - name: Deploy Flask Application
+    # Step 4: Deploy application (or any other deployment steps)
+    - name: Deploy Application
       run: |
-        echo "Deploying the Flask Application..."
-        # Add your deploy steps here (e.g., restart a service, etc.)
+        echo "Deploying the application with version $TAG"

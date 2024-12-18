@@ -1,10 +1,30 @@
-from flask import Flask
+from flask import Flask, jsonify
+from dotenv import load_dotenv
 
 app = Flask(__name__)
+load_dotenv()
+import os
 
-@app.route('/')
+APP_VERSION = os.getenv("APP_VERSION", "0.0.0")
+TOOLS_VERSION = os.getenv("TOOLS_VERSION", "0.0.0")
+
+
+@app.route("/")
 def home():
     return "Hello, Prajval!"
 
-if __name__ == '__main__':
+
+@app.route("/api/versions", methods=["GET"])
+def get_versions():
+    """
+    Endpoint to return the app and tools version.
+    """
+    version_info = {
+        "app_version": APP_VERSION,
+        "tools_version": TOOLS_VERSION,
+    }
+    return jsonify(version_info), 200
+
+
+if __name__ == "__main__":
     app.run(debug=True)

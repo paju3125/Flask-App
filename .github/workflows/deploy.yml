@@ -17,6 +17,20 @@ jobs:
         repository: paju3125/Flask-App
         ref: master
 
+    # Step 4: Increment the version
+    - name: Increment Version
+      run: |
+        python scripts/increment_version.py .env ${{ github.event.inputs.target_key }} ${{ github.event.inputs.version_part }}
+
+    # Step 5: Commit the updated .env file
+    - name: Commit and Push Changes
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add .env
+        git commit -m "Incremented ${{ github.event.inputs.target_key }} (${{ github.event.inputs.version_part }})"
+        git push origin ${{ github.ref }}
+        
     # Check out the ansible-playbooks repository
     - name: Checkout Ansible Playbooks Repository
       uses: actions/checkout@v3

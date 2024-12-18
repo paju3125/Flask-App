@@ -34,6 +34,7 @@ jobs:
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/paju3125/Flask-App.git
         git add .env
         git commit -m "Incremented ${{ github.event.inputs.target_key }} (${{ github.event.inputs.version_part }})"
         git push origin ${{ github.ref_name }}
